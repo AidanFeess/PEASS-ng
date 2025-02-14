@@ -24,7 +24,7 @@ function parse_dict {
 
         $dict_text += "`t`t<button type=""button"" class=""btn1"" data-toggle=""collapse"" data-target=""#lines$n"">$key</button><br>`n"
         $dict_text += "<i>" + ($infos -join "") + "</i>"
-        $dict_text += "<div id=""lines$n"" class=""collapse1 collapse in"">`n"
+        $dict_text += "<div id=""lines$n"" class=""collapse1"">`n"
 
         if($value."lines"){
             $dict_text += $("`n" + (parse_list $value."lines") + "`n")
@@ -123,11 +123,16 @@ function parse_json {
     foreach($obj in $json_data.psobject.properties){
         $key = $obj.Name
         $value = $obj.Value
-        $body += " `t`t<button type=""button"" class=""btn"" data-toggle=""collapse"" data-target=""#demo"" " + [string]$i + "`"><b>" + $key + " </button></b><br>`n <div id=""demo"" " + [string]$i + "`" class=""collapse"">`n"
+        $body += " `t`t<button type=""button"" class=""btn"" data-toggle=""collapse"" data-target=""#demo"" " + [string]$i + "`"><b>" + $key + " </button></b><br>`n <div id=""demo" " + [string]$i + "`" class=""collapse"">`n"
         $i += 1
         foreach($obj_2 in $value.psobject.properties) {
             $key1 = $obj_2.Name
             $value1 = $obj_2.Value
+
+            if($value1.GetType().BaseType -eq [System.Array]){
+	    	$body += parse_list $value1
+            }
+     
             if($value1.GetType().BaseType -eq [System.Object]){
                 $body += parse_dict $value1
             }
